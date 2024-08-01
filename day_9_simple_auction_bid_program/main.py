@@ -30,7 +30,7 @@ def blind_auction(participants):
 
         else:
             system('cls')
-            print("you have tiped invalid input , please try again")
+            print("You have tipped invalid input , please try again")
 
 
 if __name__ == "__main__":
