@@ -1,7 +1,8 @@
 from tkinter import *
 import string
-import random
+from random import randint,shuffle,choice
 from tkinter import messagebox
+import pyperclip
 
 FONT_NAME = "Arial"
 
@@ -10,19 +11,20 @@ FONT_NAME = "Arial"
 def password_generator():
     print("Creating the password...\n")
     elements = []
-    elements += [random.choice(string.ascii_letters) for _ in range(8)]
-    elements += [random.choice(string.punctuation) for _ in range(4)]
-    elements += [str(random.randint(0, 9)) for _ in range(4)]
+    elements += [choice(string.ascii_letters) for _ in range(randint(6, 8))]
+    elements += [choice(string.punctuation) for _ in range(randint(4, 6))]
+    elements += [str(randint(0, 9)) for _ in range(randint(4, 6))]
     # testing
     # print(f"Generated letters...{elements}")
     # print(f"Generated symbols...{elements}")
     # print(f"Generated numbers...{elements}")
 
-    random.shuffle(elements)
+    shuffle(elements)
     final_result = ''.join(elements)
     print(f"Result: {final_result}")
 
     entry_password.delete(0, END)
+    pyperclip.copy(final_result)
     entry_password.insert(END, final_result)
 
 
@@ -32,22 +34,8 @@ def clean_entries():
     entry_password.delete(0, END)
 
 
-# def read_data_from_file():
-#
-#     with open("passwords.txt", 'r') as file:
-#         data = file.read().strip()
-#         result = []
-#         for line in data.split('\n'):
-#             parts = [part.strip() for part in line.split('|')]
-#             result.append(parts)
-#
-#     return result
-
-
 def save_password():
     entries = [entry_website.get(), entry_email.get(), entry_password.get()]
-    # data_arr = read_data_from_file()
-    # print(data_arr)
 
     if "" not in entries:
         # TODO: make the function to check weather there are such entry , if yes to ask does he would like to rewrite it
@@ -61,9 +49,9 @@ def save_password():
             result = messagebox.askyesno(title=f"{entries[0]}", message=message_text)
             if result:
                 print("Saving ...")
-                entry = f"\n{entry_website.get()} | {entry_email.get()} | {entry_password.get()}"
+                entry = f"{entry_website.get()} | {entry_email.get()} | {entry_password.get()}\n"
                 db.write(entry)
-        clean_entries()
+                clean_entries()
     else:
         print("Popup ...")
         messagebox.showinfo("Oops", "Please don't leave any field empty! ")
@@ -73,9 +61,9 @@ def save_password():
 
 window = Tk()
 window.title("Password Manager")
-window.config(padx=50, pady=50, highlightthickness=0)
+window.config(padx=50, pady=50)
 
-canvas = Canvas(window, width=200, height=200, highlightthickness=0)
+canvas = Canvas(window, width=200, height=200)
 tomato_img = PhotoImage(file="logo.png")
 canvas.create_image(100, 100, image=tomato_img)
 canvas.grid(column=1, row=0)
@@ -83,6 +71,7 @@ canvas.grid(column=1, row=0)
 website_label = Label(window, text="Website:", font=(FONT_NAME, 14))
 website_label.grid(column=0, row=1, padx=5, pady=5, sticky="E")
 entry_website = Entry(window, width=52)
+entry_website.focus()
 entry_website.grid(column=1, row=1, columnspan=2, padx=5, pady=5, sticky="W")
 
 email_label = Label(window, text="Email/Username:", font=(FONT_NAME, 14))
