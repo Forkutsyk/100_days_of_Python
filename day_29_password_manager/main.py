@@ -1,6 +1,7 @@
+import json
 from tkinter import *
 import string
-from random import randint,shuffle,choice
+from random import randint, shuffle, choice
 from tkinter import messagebox
 import pyperclip
 
@@ -34,24 +35,54 @@ def clean_entries():
     entry_password.delete(0, END)
 
 
+def dump_to_file(new_data):
+    with open("data.json", "w") as data_file:
+        json.dump(new_data, data_file, indent=4)
+        clean_entries()
+
+
+def search():
+    website_search = entry_website.get()
+    if website_search != "":
+        try:
+            with open("data.json", mode="r") as data_file:
+                data = json.load(data_file)
+                if website_search in data:
+                    message = f"""
+                    Email: {data[website_search]["email"]}
+                    Password: {data[website_search]["password"]}
+                    """
+                    messagebox.showinfo(website_search, message)
+                    pyperclip.copy(data[website_search]["password"])
+                else:
+                    messagebox.showinfo("Error",f"There are no entry: {website_search}")
+
+        except FileNotFoundError:
+            messagebox.showinfo("Error", "No Data File Found")
+    else:
+        messagebox.showinfo("Oops", "fill the 'website' field to search")
+
+
 def save_password():
     entries = [entry_website.get(), entry_email.get(), entry_password.get()]
+    new_data = {
+        entries[0]: {
+            "email": entries[1],
+            "password": entries[2]
+        }
+    }
 
     if "" not in entries:
-        # TODO: make the function to check weather there are such entry , if yes to ask does he would like to rewrite it
-
-        with open("passwords.txt", mode="a") as db:
-            message_text = f"""
-            Email: {entries[1]}
-            Password: {entries[2]}
-            Is this ok?
-            """
-            result = messagebox.askyesno(title=f"{entries[0]}", message=message_text)
-            if result:
+        try:
+            with open("data.json", mode="r") as data_file:
                 print("Saving ...")
-                entry = f"{entry_website.get()} | {entry_email.get()} | {entry_password.get()}\n"
-                db.write(entry)
-                clean_entries()
+                data = json.load(data_file)
+                data.update(new_data)
+            dump_to_file(data)
+
+        except FileNotFoundError:
+            dump_to_file(new_data)
+
     else:
         print("Popup ...")
         messagebox.showinfo("Oops", "Please don't leave any field empty! ")
@@ -70,9 +101,12 @@ canvas.grid(column=1, row=0)
 
 website_label = Label(window, text="Website:", font=(FONT_NAME, 14))
 website_label.grid(column=0, row=1, padx=5, pady=5, sticky="E")
-entry_website = Entry(window, width=52)
+entry_website = Entry(window, width=32)
 entry_website.focus()
-entry_website.grid(column=1, row=1, columnspan=2, padx=5, pady=5, sticky="W")
+entry_website.grid(column=1, row=1, padx=5, pady=5, sticky="W")
+search_button = Button(window, text="Search", width=15, command=search)
+search_button.grid(column=2, row=1, padx=5, pady=5, sticky="W")
+
 
 email_label = Label(window, text="Email/Username:", font=(FONT_NAME, 14))
 email_label.grid(column=0, row=2, padx=5, pady=5, sticky="E")
@@ -82,7 +116,7 @@ entry_email.grid(column=1, row=2, columnspan=2, padx=5, pady=5, sticky="W")
 
 password_label = Label(window, text="Password", font=(FONT_NAME, 14))
 password_label.grid(column=0, row=3, padx=5, pady=5, sticky="E")
-entry_password = Entry(window, width=25)
+entry_password = Entry(window, width=32)
 entry_password.grid(column=1, row=3, padx=5, pady=5, sticky="W")
 generate_button = Button(window, text="Generate Password", width=15, command=password_generator)
 generate_button.grid(column=2, row=3, padx=5, pady=5, sticky="W")
