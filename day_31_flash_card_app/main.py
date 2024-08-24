@@ -1,86 +1,103 @@
 from tkinter import *
+from tkinter import messagebox
 import pandas
 import random
 
 BACKGROUND_COLOR = "#B1DDC6"
 FONT_NAME = "Ariel"
-DATABASE = "data\\french_words.csv"
+BLACK = "black"
+WHITE = "white"
 
 
-# ---------------------------- save progress ------------------------------- #
+class FlashCardApp:
+    def __init__(self):
+        try:
+            self.data = pandas.read_csv("data/words_to_learn.csv")
+            # print("words_to_learn")
+        except FileNotFoundError:
+            self.data = pandas.read_csv("data/french_words.csv")
+            # print("french_words")
+        except pandas.errors.EmptyDataError:
+            self.data = pandas.read_csv("data/french_words.csv")
+        self.data_dic = self.data.to_dict(orient="records")
+        self.current_card = {}
 
-# TODO: make possible to save wordlist to words_to_learn.csv and then if the file exist to use that file as db
-def i_know(data, known_word):
-    data.pop(known_word)
-    df = pandas.DataFrame(data)
-    print(df)
-    #df.to_csv('words_to_learn.csv', index=False)
-    generate_word()
-# ---------------------------- flip card queue ------------------------------- #
+        # ---------------------------- UI SETUP ------------------------------- #
+
+        # window
+        self.window = Tk()
+        self.window.title("Flash card")
+        self.window.config(padx=50, pady=50, bg=BACKGROUND_COLOR)
+
+        # images
+        self.front_card_image = PhotoImage(file="images/card_front.png")
+        self.back_card_image = PhotoImage(file="images/card_back.png")
+        self.right_button_image = PhotoImage(file="images/right.png")
+        self.wrong_button_image = PhotoImage(file="images/wrong.png")
+
+        # flashcard
+        self.canvas = Canvas(self.window, width=800, height=526, highlightthickness=0, bg=BACKGROUND_COLOR)
+        self.card = self.canvas.create_image(400, 267, image=self.front_card_image)
+        self.title = self.canvas.create_text(400, 130, font=(FONT_NAME, 40, "italic"))
+        self.word = self.canvas.create_text(400, 267, font=(FONT_NAME, 60, "bold"))
+        self.canvas.grid(column=0, row=0, columnspan=2)
+
+        # buttons
+        self.start_button = Button(self.window,
+                                   image=self.right_button_image,
+                                   bg=BACKGROUND_COLOR,
+                                   highlightthickness=0,
+                                   command=self.i_know)
+        self.start_button.grid(column=0, row=1)
+
+        self.reset_button = Button(self.window,
+                                   image=self.wrong_button_image,
+                                   bg=BACKGROUND_COLOR,
+                                   highlightthickness=0,
+                                   command=self.generate_word)
+        self.reset_button.grid(column=1, row=1)
+        self.timer = None
+        self.generate_word()
+
+    def update_ui(self, text, image, title_color, word_color, title_text):
+        self.canvas.itemconfig(self.word, text=text, fill=word_color)
+        self.canvas.itemconfig(self.card, image=image)
+        self.canvas.itemconfig(self.title, fill=title_color, text=title_text)
+
+    def i_know(self):
+        self.data_dic.remove(self.current_card)
+        df = pandas.DataFrame(self.data_dic)
+        df.to_csv('data/words_to_learn.csv', index=False)
+        self.generate_word()
+
+    def generate_word(self):
+        if len(self.data_dic) == 0:
+            messagebox.showinfo("Well done!", f"There are none word to learn. Well done!")
+            exit()
+
+        if self.timer:
+            self.window.after_cancel(self.timer)
+
+        self.current_card = random.choice(self.data_dic)
+
+        self.update_ui(text=self.current_card['French'],
+                       word_color=BLACK,
+                       image=self.front_card_image,
+                       title_color=BLACK,
+                       title_text="French")
+
+        # print(len(self.data_dic))
+        self.timer = self.window.after(3000, self.flip_card)
+
+    def flip_card(self):
+        self.update_ui(text=self.current_card['English'],
+                       word_color=WHITE,
+                       image=self.back_card_image,
+                       title_text="English",
+                       title_color=WHITE)
 
 
-def flip_card(data_frame, french_word):
-    english = data_frame.loc[data_frame.French == french_word, 'English'].values[0]
+if __name__ == '__main__':
+    app = FlashCardApp()
 
-    canvas.itemconfig(word, text=english)
-    canvas.itemconfig(card, image=back_card_image)
-    canvas.itemconfig(title, fill="white")
-    canvas.itemconfig(word, fill="white")
-    canvas.itemconfig(title, text="English")
-
-
-# ---------------------------- Generate word ------------------------------- #
-
-
-def generate_word():
-    data = pandas.read_csv("data\\french_words.csv")
-    french_dict = data.French.to_dict()
-    print(french_dict)
-    random_word = random.choice(french_dict)
-
-    canvas.itemconfig(word, text=random_word)
-    canvas.itemconfig(card, image=front_card_image)
-    canvas.itemconfig(title, fill="black")
-    canvas.itemconfig(word, fill="black")
-    canvas.itemconfig(title, text="French")
-    window.after(3000, flip_card, data, random_word)
-
-
-# ---------------------------- UI SETUP ------------------------------- #
-
-# window
-window = Tk()
-window.title("Pomodoro")
-window.config(padx=50, pady=50, bg=BACKGROUND_COLOR, width=1000, height=1000)
-
-# images
-front_card_image = PhotoImage(file="images\card_front.png")
-back_card_image = PhotoImage(file="images\card_back.png")
-right_button_image = PhotoImage(file="images\\right.png")
-wrong_button_image = PhotoImage(file="images\wrong.png")
-
-# flashcard
-canvas = Canvas(window, width=800, height=526, highlightthickness=0, bg=BACKGROUND_COLOR)
-card = canvas.create_image(400, 267, image=front_card_image)
-title = canvas.create_text(400, 130, font=(FONT_NAME, 40, "italic"))
-word = canvas.create_text(400, 267, font=(FONT_NAME, 60, "bold"))
-canvas.grid(column=0, row=0, columnspan=2)
-
-# buttons
-start_button = Button(window,
-                      image=right_button_image,
-                      bg=BACKGROUND_COLOR,
-                      highlightthickness=0,
-                      command=generate_word)
-start_button.grid(column=0, row=1)
-
-reset_button = Button(window,
-                      image=wrong_button_image,
-                      bg=BACKGROUND_COLOR,
-                      highlightthickness=0,
-                      command=generate_word)
-reset_button.grid(column=1, row=1)
-
-# functions
-generate_word()
-mainloop()
+    mainloop()
