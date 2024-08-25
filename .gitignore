@@ -51,6 +51,9 @@ coverage.xml
 .pytest_cache/
 cover/
 
+# Ignore all .idea files and folders
+.idea/
+
 # Translations
 *.mo
 *.pot
