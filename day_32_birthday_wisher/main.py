@@ -13,6 +13,8 @@ import smtplib
 import pandas
 import datetime as dt
 from random import randint
+import os
+from dotenv import load_dotenv
 
 TEMPLATE = '[NAME]'
 
@@ -22,9 +24,10 @@ class BirthdayWisher:
         self.df = pandas.read_csv("birthdays.csv")
         self.data_dic = self.df.to_dict(orient="records")
 
-        self.my_email = "oleksandr.poplavskiy14@gmail.com"
         self.birthday_congrats = ""
-        self.password = "kbgacnrytttbafcn"
+        load_dotenv("../.env")
+        self.my_email = os.getenv("MY_EMAIL")
+        self.password = os.getenv("MY_EMAIL_PASSWORD")
 
         self.now = dt.datetime.now()
         self.month = self.now.month
