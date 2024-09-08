@@ -8,6 +8,11 @@ from datetime import datetime, timedelta
 import json
 import logging
 
+# Current progress:
+# AT least it is now showing the today's amount of pages on the statistic window in the main menu ...
+# TODO 1: fix "error" on the AVG and TOTAL on the main screen in the statistic menu it is cuz i'm geting XML answer :1
+# TODO 2: fix the buttons on the ADD, UPDATE, DELETE window // probably should use grid ;1
+
 # Set up logging
 logging.basicConfig(filename='habit_tracker.log', level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s')
@@ -20,6 +25,7 @@ GRAPH_ID = os.getenv("GRAPH_ID")
 
 if not all([TOKEN, USERNAME, GRAPH_ID]):
     raise ValueError("Missing environment variables. Please check your ../.env file.")
+
 
 class HabitTracker:
     def __init__(self):
@@ -74,40 +80,59 @@ class HabitTracker:
 
             # Fetch total pages
             response = self.make_request("GET", f"{self.graph_endpoint}/{GRAPH_ID}")
-            graph_data = response.json()
-            self.total_pages.set(graph_data.get('totalQuantity', '0'))
-            logging.info(f"Total pages set to: {self.total_pages.get()}")
+            response_text = response.text
+            logging.debug(f"API Response: {response_text}")
+
+            try:
+                graph_data = response.json()
+                self.total_pages.set(graph_data.get('totalQuantity', '0'))
+                logging.info(f"Total pages set to: {self.total_pages.get()}")
+            except json.JSONDecodeError:
+                logging.error(f"Failed to parse JSON from API response: {response_text}")
+                self.total_pages.set("Error")
 
             # Calculate average pages
             today = datetime.now().date()
             start_date = (today - timedelta(days=30)).strftime("%Y%m%d")
             end_date = today.strftime("%Y%m%d")
             response = self.make_request("GET", f"{self.pixel_endpoint}?from={start_date}&to={end_date}")
-            pixels_data = response.json()
-            pixels = pixels_data.get('pixels', [])
-            if pixels:
-                avg = sum(int(pixel['quantity']) for pixel in pixels) / len(pixels)
-                self.avg_pages.set(f"{avg:.1f}")
-            else:
-                self.avg_pages.set("0.0")
-            logging.info(f"Average pages set to: {self.avg_pages.get()}")
+            response_text = response.text
+            logging.debug(f"API Response: {response_text}")
+
+            try:
+                pixels_data = response.json()
+                pixels = pixels_data.get('pixels', [])
+                if pixels:
+                    avg = sum(int(pixel['quantity']) for pixel in pixels) / len(pixels)
+                    self.avg_pages.set(f"{avg:.1f}")
+                else:
+                    self.avg_pages.set("0.0")
+                logging.info(f"Average pages set to: {self.avg_pages.get()}")
+            except json.JSONDecodeError:
+                logging.error(f"Failed to parse JSON from API response: {response_text}")
+                self.avg_pages.set("Error")
 
             # Fetch today's pages
             today_date = today.strftime("%Y%m%d")
             response = self.make_request("GET", f"{self.pixel_endpoint}/{today_date}")
-            if response.status_code == 200:
-                today_data = response.json()
-                self.today_pages.set(today_data.get('quantity', '0'))
-            else:
-                self.today_pages.set("0")
-            logging.info(f"Today's pages set to: {self.today_pages.get()}")
+            response_text = response.text
+            logging.debug(f"API Response: {response_text}")
+
+            try:
+                if response.status_code == 200:
+                    today_data = response.json()
+                    self.today_pages.set(today_data.get('quantity', '0'))
+                elif response.status_code == 404:
+                    self.today_pages.set("0")
+                else:
+                    response.raise_for_status()
+                logging.info(f"Today's pages set to: {self.today_pages.get()}")
+            except json.JSONDecodeError:
+                logging.error(f"Failed to parse JSON from API response: {response_text}")
+                self.today_pages.set("Error")
 
         except requests.exceptions.RequestException as e:
             error_message = f"Failed to update statistics: {str(e)}"
-            logging.error(error_message, exc_info=True)
-            messagebox.showerror("Error", error_message)
-        except json.JSONDecodeError as e:
-            error_message = f"Failed to parse API response: {str(e)}"
             logging.error(error_message, exc_info=True)
             messagebox.showerror("Error", error_message)
         except Exception as e:
@@ -122,9 +147,6 @@ class HabitTracker:
             return response
         except requests.RequestException as e:
             logging.error(f"Request failed: {str(e)}", exc_info=True)
-            raise
-        except Exception as e:
-            logging.error(f"Unexpected error in make_request: {str(e)}", exc_info=True)
             raise
 
     def open_add_window(self):
