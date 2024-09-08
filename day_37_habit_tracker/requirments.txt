@@ -1,0 +1,40 @@
+
+Main menu 
+  Structural elements:
+    - statistics: On something like canvas(Total pages readed, avg pages readed, today pages readed ). It should take 70% of all interface an should be in the upper part
+    - Add button: (should take around 30 % of the down page) 
+    - Update button: (should take around 30 % of the down page) 
+    - Delete pixel: (should take around 30 % of the down page) 
+	tree buttons should be in the diferent column -> (ADD / UPDATE / DELETE) + 10% of padding
+  Functionality:
+    - Add button: It should open a new window "Adding new pixel"
+    - Update button: It should open a new window "Update pixel"
+    - Delete pixel: It should open a new window "Delete pixel"
+  
+Adding new pixel
+  Structural elements:
+    - date: probably a calendar or the input 
+    - how much pages : an input for an integer
+    - add button: simple button on the right bottom corner
+  Functionality:
+    - add button: should make an POST request to my graph with validation wether today i already posted some pixel if "yes" it should make a popup that "i already readed 
+	some pages today , please use update function"
+
+Update pixel
+  Structural elements:
+    - date: probably a calendar or the input 
+    - how much pages : an input for an integer
+    - update button: simple button on the right bottom corner
+  Functionality:
+    - update button: should make an POST request to my graph with validation wether today i already posted some pixel if "no" it should make a popup that "i havent readed 
+	any pages today , please use add function"
+
+Delete pixel
+  Structural elements:
+    - date: probably a calendar or the input 
+    - delete button: simple button on the right bottom corner
+  Functionality: 
+    - update button: Firstly it should show a popup with "Do you want to delete the pixel for {date provided} ? yes/no" then when io click yes it should make an DELETE request
+     to my graph with validation weather today i already posted some pixel if "no" it should make a popup that "i haven't read any pages today there is nothing to delete for {date provided}:"
+
+
