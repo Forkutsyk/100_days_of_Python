@@ -1,0 +1,32 @@
+[
+    {
+        "city": "Paris",
+        "iataCode": "PAR",
+        "lowestPrice": 54,
+        "id": 2
+    },
+    {
+        "city": "Frankfurt",
+        "iataCode": "FRA",
+        "lowestPrice": 42,
+        "id": 3
+    },
+    {
+        "city": "Tokyo",
+        "iataCode": "TYO",
+        "lowestPrice": 485,
+        "id": 4
+    },
+    {
+        "city": "Hong Kong",
+        "iataCode": "HKG",
+        "lowestPrice": 551,
+        "id": 5
+    },
+    {
+        "city": "Istanbul",
+        "iataCode": "IST",
+        "lowestPrice": 95,
+        "id": 6
+    }
+]
