@@ -13,6 +13,7 @@ class DataManager:
 
     def __init__(self):
         self.data = self.get_data()
+        self.user_data = self.get_user_data()
         # # I put data from the sheet to json file to work with them locally,
         # as the sheety API limited to 200 requests/month
         # try:
@@ -49,3 +50,13 @@ class DataManager:
             sheety_response.raise_for_status()  # Raise an error if the request fails
             print(f"Updated row {row_id}: {sheety_response.json()}")
 
+    def get_user_data(self):
+        # This class is responsible for talking to the Google Sheet.
+        sheety_url = os.getenv("USERS_SHEET_GET")
+        sheety_response = requests.get(url=sheety_url, auth=basic)
+        sheety_response.raise_for_status()
+        users = []
+        for user in sheety_response.json()['users']:
+            users.append(user['whatIsYourEmail?'].strip())
+        # print(users)
+        return users

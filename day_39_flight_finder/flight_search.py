@@ -39,7 +39,7 @@ class FlightSearch:
         return amadeus_response.json()['data'][0]['iataCode']
 
     # Func to get information about the flights to the countries mentioned in the sheet
-    def get_flight_data(self, origin, destination, from_date, to_date):
+    def get_flight_data(self, origin, destination, from_date, to_date, is_direct='true'):
         endpoint = 'https://test.api.amadeus.com/v2/shopping/flight-offers'
         headers = {'Authorization': f'Bearer {self._token}'}
         params = {
@@ -48,7 +48,7 @@ class FlightSearch:
             "departureDate": from_date.strftime("%Y-%m-%d"),
             "returnDate": to_date.strftime("%Y-%m-%d"),
             'adults': 1,
-            'nonStop': 'true',
+            'nonStop': is_direct,
             'currencyCode': 'GBP',
             "max": "20"
         }
