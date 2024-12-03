@@ -1,7 +1,15 @@
 import requests
 from bs4 import BeautifulSoup
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
+import os
+from dotenv import load_dotenv
 
+load_dotenv("../.env")
 BILBOARD_URL = "https://www.billboard.com/charts/hot-100/"
+SPOTIPY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
+SPOTIPY_CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
+REDIRECT_URI = os.getenv("REDIRECT_URI")
 
 
 def ask_user():
@@ -30,8 +38,49 @@ def parser(data):
     return title_names, step_two
 
 
+def spotify_auth():
+    auth_manager = SpotifyOAuth(client_id=SPOTIPY_CLIENT_ID,
+                                client_secret=SPOTIPY_CLIENT_SECRET,
+                                redirect_uri=REDIRECT_URI,
+                                scope="playlist-modify-private",
+                                cache_path='.cache'
+                                )
+    return spotipy.Spotify(auth_manager=auth_manager)
+
+
+def spotify_uri_search(auth, tracks, artists):
+    result = []
+    for track in tracks:
+        query = f"track:{track} artist:{artists[tracks.index(track)]}"
+        try:
+            response = auth.search(q=query, type='track')
+            uri = response['tracks']['items'][0]['uri']
+            result.append(uri)
+        except IndexError:
+            pass
+
+    return result
+
+
+def create_playlist(auth, uri_list, year):
+    user_id = auth.current_user()["id"]
+    song_count = len(uri_list)
+    playlist_name = f"{year} Billboard {song_count}"
+    output = auth.user_playlist_create(user=user_id,
+                                       name=playlist_name,
+                                       public=False,
+                                       description=f"The {song_count} of the top 100 song from {year}")
+    auth.user_playlist_add_tracks(user=user_id, playlist_id=output['id'], tracks=uri_list)
+    print(f"I've created the playlist, check it out!\n{output['external_urls']['spotify']}")
+
+
 if __name__ == '__main__':
+
     user_response = ask_user()
     clean_html = data_collector(user_response)
     titles, bands = parser(clean_html)
+    sp = spotify_auth()
+    list_of_song_uri = spotify_uri_search(sp, titles, bands)
+    create_playlist(sp, list_of_song_uri, user_response)
+
 
