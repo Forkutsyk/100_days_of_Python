@@ -1,0 +1,82 @@
+[
+    {
+        "time": 303.4991452693939,
+        "cookies_per_second": "Failed",
+        "upgrades_bought": 27
+    },
+    {
+        "time": 301.86358857154846,
+        "cookies_per_second": "Failed",
+        "upgrades_bought": 26
+    },
+    {
+        "total_runtime": 301.08963227272034,
+        "cookies_per_second": 9.6,
+        "upgrades_bought": 26
+    },
+    {
+        "time": 300.0546877384186,
+        "cookies/sec": " 0",
+        "Upgrades bought": 0
+    },
+    {
+        "time": 300.0447654724121,
+        "cookies/sec": " 25",
+        "Upgrades bought": 0
+    },
+    {
+        "time": 300.1180536746979,
+        "cookies/sec": " 27",
+        "Upgrades bought": 0
+    },
+    {
+        "time": 301.9922776222229,
+        "cookies/sec": " 12.8",
+        "Cookies at the end": "12"
+    },
+    {
+        "time": 302.76950311660767,
+        "cookies/sec": 12.2,
+        "Cookies at the end": "264"
+    },
+    {
+        "time": 300.1827857494354,
+        "cookies/sec": 0.0,
+        "Cookies at the end": "0"
+    },
+    {
+        "time": 304.22757625579834,
+        "cookies/sec": 15.4,
+        "Cookies at the end": "105"
+    },
+    {
+        "time": 300.4504952430725,
+        "cookies/sec": 0.0,
+        "Cookies at the end": "0"
+    },
+    {
+        "time": 300.233051776886,
+        "cookies/sec": " 12.2",
+        "Cookies at the end": "191"
+    },
+    {
+        "time": 300.2528042793274,
+        "cookies/sec": " 13.4",
+        "Cookies at the end": "431"
+    },
+    {
+        "time": 300.1291356086731,
+        "cookies/sec": " 20.2",
+        "Cookies at the end": "371"
+    },
+    {
+        "time": 300.35420966148376,
+        "cookies/sec": " 14.6",
+        "Cookies at the end": "294"
+    },
+    {
+        "time": 300.1517388820648,
+        "cookies/sec": " 12",
+        "Cookies at the end": "281"
+    }
+]

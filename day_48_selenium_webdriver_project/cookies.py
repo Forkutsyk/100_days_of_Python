@@ -2,6 +2,10 @@
 # 8,7 per second in first try
 # 12,8 per seconds second try (18/11) // added if statement + changed from 5 to 10 sec
 
+# TODO:1 check what is the problem with bought_upgrades (why is it causing error)
+# TODO:2 change a code to at least reach a 100 cps
+
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -47,8 +51,6 @@ try:
         if (time.time() - last_action_time) >= 10:
             # print(time.time() - start_time)
             # print("looking for the upgrade\n")
-
-            cookie_button.click()
             try:
                 products_available = driver.find_elements(By.CSS_SELECTOR, value='.product.unlocked.enabled')
                 last_action_time = time.time()
@@ -61,14 +63,15 @@ try:
                 print(f"Occurred some error in the clicking cookie part: {e}\n")
     result = driver.find_element(By.ID, value="cookiesPerSecond").text.split()
 
-    print("Finished clicking.")
-    print(f"cookies/second: {result[2]}")
-    print(f"Upgrades bought:{bought_upgrades}")
     stats = {
         "time": time.time() - start_time,
         "cookies/sec": result[2],
         "Upgrades bought": bought_upgrades
     }
+    print("Finished clicking.")
+    print(f"cookies/second: {result[2]}")
+    print(f"Upgrades bought:{bought_upgrades}")
+
 
 except Exception as e:
     print(f"Could not find or click the cookie button: {e}")
