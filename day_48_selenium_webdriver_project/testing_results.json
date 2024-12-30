@@ -78,5 +78,34 @@
         "time": 300.1517388820648,
         "cookies/sec": " 12",
         "Cookies at the end": "281"
+    },
+    {
+        "time": 300.24027729034424,
+        "cookies/sec": " 19.4",
+        "Cookies at the end": "360"
+    },
+    {
+        "time": 301.01825618743896,
+        "cookies/sec": 31.2,
+        "Cookies at the end": 636,
+        "Upgrades bought": 17
+    },
+    {
+        "time": 301.4244296550751,
+        "cookies/sec": 13.4,
+        "Cookies at the end": 239,
+        "Upgrades bought": 23
+    },
+    {
+        "time": 302.0338788032532,
+        "cookies/sec": 41.8,
+        "Cookies at the end": 74,
+        "Upgrades bought": 18
+    },
+    {
+        "time": 302.6717884540558,
+        "cookies/sec": 41.0,
+        "Cookies at the end": 238,
+        "Upgrades bought": 18
     }
 ]
