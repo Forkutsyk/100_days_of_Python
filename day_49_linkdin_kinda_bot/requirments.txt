@@ -1,0 +1,47 @@
+Bot który sprawdza ostatnie ofery wystawione na Linkdinie . Dla projektu używam Pythona i moduł selenium. Funkcjonalność powinna być taka : bot otwiera po koleji oferty na liście (od 1 do ostatnie na liście dostępnej na obecnej stronie) po czym dodaje oferte w obserwowane. Bot przechodzi do kolejnej oferty na liście i wykonuje to dla każdej oferty na tej stronie. Po czy przechodzi na 2 strone (jesli ona jest) i zaczyna to od nowa. Jak przejdzie 2 strony to kończy.
+
+Upgrade 1: podczas jak bot dodaje oferte w obserwowane żeby on jeszcze przeskrolował oferte do momentu jak będzie dostępna opcja obserwowanie firmy jaka je wystawiła.
+
+Upgrade 2:  opisywanie firm oraz ofert jakie już masz zapisane w plik json i dodanie w takiej postaci:
+
+aplication_list = {
+companyName1: {
+	position: positionName1,
+	position: positionName2,
+	position: positionName3,
+},
+... 
+,
+companyNam_n: {
+	position: positionName_n,
+	position: positionName_n,
+	position: positionName_n
+}}
+
+Upgrade 3: Dodanie weryfikacji czy już firma jest zapisana w słowniku , jeśli tak to nie wykonujesz skrolowanie i subskrybowanie na firme 
+
+
+
+Algorytm
+
+Upgrade 1: 
+1 skrypt otwiera driver
+2 skrypt loguje się do LinkedIn
+3 Skrypt zamyka chat po prawej stronie
+4 Skrypt pobiera liste dostępnych ofert obecnie
+- udało się ?
+	TAK:
+	5 skrypt klika na 1 oferte
+	6 skrypt obserwuje ją
+	7 skrypt skroluje
+	8 powracamy do punktu 4
+ 
+	NIE:
+	9 add value +1
+	czy value =2
+		TAK:
+		11 Skrypt kończy prace
+
+		NIE:  
+		11.2 skrypt przechodzi na strone 2 
+		11.3 skrypt powraca do punktu 3
