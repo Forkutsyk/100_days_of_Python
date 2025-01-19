@@ -3,8 +3,9 @@ import json
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
-## The best on my old laptop wih not really god internet is 41,8cps
+## The best on my PC is 118
 # I could also try mozilla driver (it seems to be faster)
+
 
 class CookieBot:
     def __init__(self):
@@ -27,7 +28,7 @@ class CookieBot:
         stats = {
             "time": time.time() - start_time,
             "cookies/sec": float(result.split(':')[1]),
-            "Cookies at the end": int(money),
+            "Cookies at the end": money,
             "Upgrades bought": self.bought_upgrades
         }
         self.stats.append(stats)
@@ -63,9 +64,9 @@ class CookieBot:
 
         print("started clicking")
         while not time.time() >= end_time:
-            for click in range(15):
+            for click in range(50):
                 big_cookie.click()
-            if (time.time() - last_action_time) >= 15: # 15 / 10 bad
+            if (time.time() - last_action_time) >= 15:
 
                 for item in range(len(store)):
                     try:
@@ -73,7 +74,6 @@ class CookieBot:
                         # PS:checking the price with every iteration will slow down the Bot even more
                         store_item = driver.find_element(By.ID, f'{store[item]}')
                         store_item.click()
-
 
                     except Exception as e:
                         # XD just trying to max out efficiency of this bot
